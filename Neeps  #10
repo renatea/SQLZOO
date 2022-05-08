@@ -1,0 +1,17 @@
+/*
+https://sqlzoo.net/wiki/Neeps_medium_questions
+*/
+
+/*
+10. How many members of staff have contact time which is greater than the average?
+*/
+
+WITH s AS (SELECT teaches.staff, SUM (event.duration) as total
+FROM teaches JOIN event ON teaches.event = event.id
+GROUP BY teaches.staff)
+
+SELECT COUNT(staff) AS staff FROM s
+WHERE total >
+(SELECT 
+SUM(event.duration)/(COUNT (DISTINCT teaches.staff)) AS avg
+FROM event JOIN teaches ON event.id = teaches.event)
