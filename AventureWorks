@@ -1,0 +1,23 @@
+/*
+https://sqlzoo.net/wiki/AdventureWorks_hard_questions
+*/
+
+/*
+15. Identify the three most important cities. Show the break down of top level product category against city.
+*/
+
+WITH a AS(select a.City, cat.Name, sum( d.OrderQty * (d.UnitPrice -d.UnitPriceDiscount)) as sales, 
+DENSE_rank() OVER(PARTITION by a.City ORDER BY sum( d.OrderQty * (d.UnitPrice -d.UnitPriceDiscount))) as rank
+FROM Address a JOIN SalesOrderHeader h on a.AddressID = h.BillToAddressID
+JOIN SalesOrderDetail d on. d.SalesOrderID = h.SalesOrderID
+JOIN Product p on p.ProductID = d.ProductID
+JOIN ProductCategory cat ON cat.ProductCategoryID = p.ProductCategoryID
+GROUP BY a.City, cat.Name
+order by a.City, sales desc)
+
+SELECT *
+FROM a
+WHERE a.rank =1
+ORDER BY sales DESC
+LIMIT 3
+
